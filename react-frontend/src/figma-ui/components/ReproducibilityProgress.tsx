@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Progress } from './ui/progress';
 import { RefreshCw, CheckCircle, XCircle, Clock, User, Layers, Timer } from 'lucide-react';
 import { getReproducibilityStatus, ReproducibilityStatusResponse } from '../lib/api';
+import { RotatingText } from './RotatingText';
+import { LOADING_MESSAGES } from '../lib/loadingMessages';
 
 interface ReproducibilityProgressProps {
   jobId: string;
@@ -89,9 +91,9 @@ export function ReproducibilityProgress({ jobId, onComplete }: ReproducibilityPr
   const stageWithinIteration = currentStageIndex >= 0 ? currentStageIndex : 0;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-2xl">
-        <Card className="border-2 shadow-lg">
+        <Card className="border shadow-card-xl">
           <CardHeader className="text-center pb-4">
             <div className="mx-auto mb-4">
               {status?.status === 'completed' ? (
@@ -114,6 +116,17 @@ export function ReproducibilityProgress({ jobId, onComplete }: ReproducibilityPr
             <CardDescription className="text-base">
               {error || progress?.message || 'Initializing test'}
             </CardDescription>
+            {status?.status === 'processing' && (
+              <div className="mt-2">
+                <RotatingText
+                  messages={
+                    LOADING_MESSAGES[
+                      ({ agent_generation: 'Agent Generation', experience_simulation: 'Experience Simulation', interviews: 'Interview', need_extraction: 'Need Extraction' } as Record<string, string>)[progress?.stage || '']
+                    ] || LOADING_MESSAGES['default']
+                  }
+                />
+              </div>
+            )}
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -152,9 +165,9 @@ export function ReproducibilityProgress({ jobId, onComplete }: ReproducibilityPr
             </div>
 
             {/* Current Stage */}
-            <div className="bg-muted/50 rounded-lg p-4 space-y-4">
+            <div className="bg-gray-50 border border-border rounded-xl p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Current Stage</span>
+                <span className="eyebrow">Current Stage</span>
                 <span className="font-semibold text-primary">
                   {stageDisplayNames[progress?.stage || 'queued'] || progress?.stage_name || 'Waiting'}
                 </span>
@@ -207,7 +220,7 @@ export function ReproducibilityProgress({ jobId, onComplete }: ReproducibilityPr
 
             {/* Time Information */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-muted/30 rounded-lg p-3 text-center">
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Timer className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Elapsed</span>
@@ -216,7 +229,7 @@ export function ReproducibilityProgress({ jobId, onComplete }: ReproducibilityPr
                   {formatTime(progress?.elapsed_seconds)}
                 </span>
               </div>
-              <div className="bg-muted/30 rounded-lg p-3 text-center">
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Est. Remaining</span>

@@ -54,7 +54,7 @@ export function NeedCard({ need, index }: NeedCardProps) {
       transition={{ duration: 0.3, delay: index * 0.05 }}
     >
       <Card 
-        className="h-full hover:shadow-md transition-shadow cursor-pointer" 
+        className="h-full shadow-card-sm hover:shadow-card transition-shadow cursor-pointer" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <CardContent className="p-4 space-y-3">
@@ -91,13 +91,13 @@ export function NeedCard({ need, index }: NeedCardProps) {
               >
                 {showsSummary && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Full Need:</p>
+                    <p className="eyebrow mb-1">Full Need</p>
                     <p className="text-xs text-foreground/80">{need.need_statement}</p>
                   </div>
                 )}
                 {need.design_implication && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Design Implication:</p>
+                    <p className="eyebrow mb-1">Design Implication</p>
                     <p className="text-xs text-foreground/80">{need.design_implication}</p>
                   </div>
                 )}

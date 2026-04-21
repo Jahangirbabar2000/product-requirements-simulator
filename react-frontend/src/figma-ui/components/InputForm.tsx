@@ -3,9 +3,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { Slider } from './ui/slider';
+import { HeatmapSlider } from './ui/heatmap-slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Sparkles, History, Lightbulb, RefreshCw, FileText } from 'lucide-react';
+import { Sparkles, History, Lightbulb, RefreshCw, FileText, Clock } from 'lucide-react';
+import { estimatePipelineSeconds, formatDuration } from '../lib/timeEstimate';
 
 const PROMPT_HISTORY_KEY = 'needgen_prompt_history';
 const MAX_HISTORY_ITEMS = 10;
@@ -74,7 +75,7 @@ const QUICK_START_COUNT = 3;
 export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: InputFormProps) {
   const [product, setProduct] = useState('');
   const [designContext, setDesignContext] = useState('');
-  const [nAgents, setNAgents] = useState([3]);
+  const [nAgents, setNAgents] = useState([4]);
   const [promptHistory, setPromptHistory] = useState<PromptHistoryItem[]>([]);
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
   const [filteredHistory, setFilteredHistory] = useState<PromptHistoryItem[]>([]);
@@ -133,10 +134,10 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-2">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-2">
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-4xl font-bold mb-2">NeedGen</h1>
@@ -145,7 +146,7 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
           </p>
         </div>
 
-        <Card className="border-2 shadow-lg">
+        <Card className="border shadow-card-lg">
           <CardHeader className="pb-2">
             <CardTitle>Start Analysis</CardTitle>
             <CardDescription>
@@ -156,7 +157,7 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Quick Start - Fixed suggestions at the TOP */}
               <div>
-                <Label className="text-sm text-muted-foreground mb-2 block">Quick Start</Label>
+                <p className="eyebrow mb-2">Quick Start</p>
                 <div className="flex flex-wrap gap-2">
                   {quickStartSuggestions.map((suggestion, idx) => (
                     <Button
@@ -188,8 +189,8 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
                   required
                 />
                 {showHistoryDropdown && filteredHistory.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                    <div className="px-3 py-2 text-xs text-muted-foreground border-b border-gray-100 flex items-center gap-1.5">
+                  <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-card-lg max-h-48 overflow-y-auto">
+                    <div className="px-3 py-2 text-xs text-muted-foreground border-b border-border flex items-center gap-1.5">
                       <History className="w-3 h-3" />
                       Recent searches
                     </div>
@@ -198,7 +199,7 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
                         key={index}
                         type="button"
                         onClick={() => handleHistorySelect(item)}
-                        className="w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors flex items-start gap-2 border-b border-gray-50 last:border-b-0"
+                        className="w-full px-3 py-2.5 text-left hover:bg-accent transition-colors flex items-start gap-2 border-b border-border/50 last:border-b-0"
                       >
                         <History className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                         <div className="min-w-0">
@@ -224,22 +225,32 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
                 />
               </div>
 
-              {/* Number of Agents Slider */}
+              {/* Number of Agents Slider with heatmap gradient */}
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-baseline">
                   <Label>Number of User Personas</Label>
-                  <span className="text-sm text-muted-foreground">{nAgents[0]} agents</span>
+                  <span className="text-sm font-medium text-foreground">{nAgents[0]} agents</span>
                 </div>
-                <Slider
+                <HeatmapSlider
                   value={nAgents}
                   onValueChange={setNAgents}
-                  min={1}
-                  max={5}
-                  step={1}
+                  min={2}
+                  max={20}
+                  step={2}
                 />
-                <p className="text-xs text-muted-foreground">
-                  More agents provide diverse perspectives but take longer (≈1 min per agent)
-                </p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Few · fast</span>
+                  <span>Diverse · thorough</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-muted/60 dark:bg-white/5 border border-border/70 px-3 py-2.5">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-primary" />
+                    <span className="text-muted-foreground">Estimated time</span>
+                  </div>
+                  <span className="text-sm font-semibold text-foreground">
+                    ≈ {formatDuration(estimatePipelineSeconds(nAgents[0]))}
+                  </span>
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -259,7 +270,7 @@ export function InputForm({ onSubmit, onReproducibilityTest, onViewPastRuns }: I
         {/* Footer: help text + Past runs / Reproducibility */}
         <div className="flex items-center justify-between mt-6 px-2 flex-wrap gap-2">
           <p className="text-xs text-muted-foreground">
-            Analysis typically takes 2-5 minutes depending on the number of personas
+            Most analyses finish in under 3 minutes. Larger persona counts run longer.
           </p>
           <div className="flex items-center gap-2">
             {onViewPastRuns && (

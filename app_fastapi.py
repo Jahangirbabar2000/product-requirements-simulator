@@ -67,7 +67,7 @@ logger = get_logger(__name__)
 class AnalyzeRequest(BaseModel):
     product: str = Field(..., min_length=1, description="Product name or idea")
     design_context: str = Field(..., min_length=1, description="Design context or usage scenario")
-    n_agents: int = Field(default=1, ge=1, le=5, description="Number of agent personas to generate")
+    n_agents: int = Field(default=4, ge=2, le=20, description="Number of agent personas to generate")
     pipeline_mode: str = Field(default="parallel", description="Pipeline execution mode: 'sequential' or 'parallel'")
 
     class Config:
@@ -113,7 +113,7 @@ class ResultsResponse(BaseModel):
 class ReproducibilityRequest(BaseModel):
     product: str = Field(..., min_length=1, description="Product name or idea")
     design_context: str = Field(..., min_length=1, description="Design context or usage scenario")
-    n_agents: int = Field(default=3, ge=1, le=5, description="Number of agent personas per iteration")
+    n_agents: int = Field(default=4, ge=2, le=20, description="Number of agent personas per iteration")
     n_iterations: int = Field(default=3, ge=2, le=10, description="Number of iterations to run")
 
     class Config:

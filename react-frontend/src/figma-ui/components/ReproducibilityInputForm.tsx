@@ -3,9 +3,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { Slider } from './ui/slider';
+import { HeatmapSlider } from './ui/heatmap-slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { RefreshCw, Lightbulb, ArrowLeft } from 'lucide-react';
+import { RefreshCw, Lightbulb, ArrowLeft, Clock } from 'lucide-react';
+import { estimatePipelineSeconds, formatDuration } from '../lib/timeEstimate';
 
 const DEFAULT_SUGGESTIONS = [
   { product: 'Fitness Tracking App', context: 'A mobile app for tracking workouts, nutrition, and health metrics. Target users are health-conscious individuals aged 25-45.' },
@@ -50,11 +51,12 @@ export function ReproducibilityInputForm({ onSubmit, onBack }: ReproducibilityIn
     setDesignContext(suggestedContext);
   };
 
-  // Calculate estimated time
-  const estimatedTime = nAgents[0] * nIterations[0] * 1.5; // ~1.5 minutes per agent
+  // Total estimated time = single-run estimate * iterations
+  const singleRunSeconds = estimatePipelineSeconds(nAgents[0]);
+  const totalSeconds = singleRunSeconds * nIterations[0];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-2">
@@ -130,11 +132,11 @@ export function ReproducibilityInputForm({ onSubmit, onBack }: ReproducibilityIn
 
               {/* Number of Agents */}
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-baseline">
                   <Label>Agents per Iteration</Label>
-                  <span className="text-sm text-muted-foreground">{nAgents[0]} agents</span>
+                  <span className="text-sm font-medium text-foreground">{nAgents[0]} agents</span>
                 </div>
-                <Slider
+                <HeatmapSlider
                   value={nAgents}
                   onValueChange={setNAgents}
                   min={1}
@@ -148,11 +150,11 @@ export function ReproducibilityInputForm({ onSubmit, onBack }: ReproducibilityIn
 
               {/* Number of Iterations */}
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-baseline">
                   <Label>Number of Iterations</Label>
-                  <span className="text-sm text-muted-foreground">{nIterations[0]} iterations</span>
+                  <span className="text-sm font-medium text-foreground">{nIterations[0]} iterations</span>
                 </div>
-                <Slider
+                <HeatmapSlider
                   value={nIterations}
                   onValueChange={setNIterations}
                   min={2}
@@ -165,15 +167,19 @@ export function ReproducibilityInputForm({ onSubmit, onBack }: ReproducibilityIn
               </div>
 
               {/* Time Estimate */}
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-muted/50 rounded-lg p-4 border border-border/70">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Estimated Time</span>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">Estimated Time</span>
+                  </div>
                   <span className="text-lg font-bold text-primary">
-                    ~{estimatedTime.toFixed(0)} minutes
+                    ≈ {formatDuration(totalSeconds)}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {nAgents[0]} agents × {nIterations[0]} iterations = {nAgents[0] * nIterations[0]} pipeline runs
+                  {' · '}~{formatDuration(singleRunSeconds)} per run
                 </p>
               </div>
 

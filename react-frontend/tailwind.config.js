@@ -6,12 +6,44 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+        display: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
+      boxShadow: {
+        'card-sm': '0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 3px 0 rgba(0,0,0,0.06)',
+        'card': '0 1px 3px 0 rgba(0,0,0,0.04), 0 4px 8px -2px rgba(0,0,0,0.06)',
+        'card-lg': '0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 20px -4px rgba(0,0,0,0.08)',
+        'card-xl': '0 8px 16px -4px rgba(0,0,0,0.06), 0 20px 40px -8px rgba(0,0,0,0.10)',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // Landing page palette
+        navy: {
+          950: '#050816',
+          900: '#0a0e1a',
+          800: '#0f172a',
+          700: '#1e293b',
+        },
+        amber: {
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+        },
+        teal: {
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+        },
+        cyan: {
+          400: '#22d3ee',
+          500: '#06b6d4',
+        },
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {

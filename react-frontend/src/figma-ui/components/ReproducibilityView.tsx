@@ -94,18 +94,18 @@ export function ReproducibilityView({ results, onStartNew }: ReproducibilityView
 
   // Get color based on score
   const getScoreColor = (score: number) => {
-    if (score >= 0.85) return 'text-green-600';
-    if (score >= 0.70) return 'text-blue-600';
-    if (score >= 0.50) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 0.85) return 'text-green-400';
+    if (score >= 0.70) return 'text-blue-400';
+    if (score >= 0.50) return 'text-yellow-400';
+    return 'text-red-400';
   };
 
   const getRatingBadgeColor = (rating: string) => {
     switch (rating) {
-      case 'Excellent': return 'bg-green-100 text-green-800';
-      case 'Good': return 'bg-blue-100 text-blue-800';
-      case 'Moderate': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-red-100 text-red-800';
+      case 'Excellent': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'Good': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Moderate': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      default: return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
     }
   };
 
@@ -130,7 +130,7 @@ export function ReproducibilityView({ results, onStartNew }: ReproducibilityView
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -492,14 +492,14 @@ export function ReproducibilityView({ results, onStartNew }: ReproducibilityView
                       <div
                         key={run.iteration}
                         className={`flex items-center justify-between p-4 rounded-lg border ${
-                          run.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                          run.success ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800/40' : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800/40'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           {run.success ? (
-                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <CheckCircle className="h-5 w-5 text-green-400" />
                           ) : (
-                            <AlertCircle className="h-5 w-5 text-red-600" />
+                            <AlertCircle className="h-5 w-5 text-red-400" />
                           )}
                           <div>
                             <p className="font-medium">Iteration {run.iteration}</p>

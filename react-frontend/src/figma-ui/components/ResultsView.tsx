@@ -91,7 +91,8 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
         })),
     [needsByPriority]
   );
-  const PRIORITY_COLORS = { High: '#dc2626', Medium: '#ea580c', Low: '#6b7280' };
+  const PRIORITY_COLORS = { High: '#f59e0b', Medium: '#14b8a6', Low: '#64748b' };
+  const chartTooltipStyle = { borderRadius: 8, background: '#ffffff', border: '1px solid #e2e2e6', color: '#0a0a0b', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' };
 
   const toggleCard = (index: number) => {
     setFlippedCards(prev => {
@@ -203,12 +204,12 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Run input (what was submitted for this run) */}
         {runInput && (
-          <section className="border-2 border-border rounded-lg p-6 bg-card">
+          <section className="border border-border rounded-xl p-6 bg-card shadow-card">
             <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
               Run input
             </h2>
-            <Card className="bg-muted/20 border-2">
+            <Card className="bg-muted/20 border">
               <CardContent className="pt-6">
                 <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
@@ -234,7 +235,7 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
         )}
 
         {/* Executive Summary (after run input) */}
-        <section className="border-2 border-border rounded-lg p-6 bg-card">
+        <section className="border border-border rounded-xl p-6 bg-card shadow-card">
           <h2 className="mb-4">Executive Summary</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
@@ -261,19 +262,19 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">High</span>
-                    <Badge variant="secondary" className="bg-red-100 text-red-800">
+                    <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
                       {needsByPriority.High || 0}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Medium</span>
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
                       {needsByPriority.Medium || 0}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Low</span>
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
                       {needsByPriority.Low || 0}
                     </Badge>
                   </div>
@@ -308,7 +309,7 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
         <Separator />
 
         {/* Detailed Results */}
-        <section className="border-2 border-border rounded-lg p-6 bg-card">
+        <section className="border border-border rounded-xl p-6 bg-card shadow-card">
           <Tabs defaultValue="needs" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="needs">
@@ -364,7 +365,7 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
                       >
                         {/* Front: Need statement */}
                         <div
-                          className="absolute inset-0 bg-card border-2 border-border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow"
+                          className="absolute inset-0 bg-card border border-border rounded-lg p-4 flex flex-col justify-between shadow-card-sm hover:shadow-card transition-shadow"
                           style={{ backfaceVisibility: 'hidden' }}
                         >
                           <div className="flex-1 flex flex-col justify-center">
@@ -382,13 +383,13 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
                         </div>
                         {/* Back: Design implication */}
                         <div
-                          className="absolute inset-0 bg-primary/5 border-2 border-primary/20 rounded-lg p-4 flex flex-col justify-center shadow-sm"
+                          className="absolute inset-0 bg-primary/5 border border-primary/20 rounded-lg p-4 flex flex-col justify-center shadow-card-sm"
                           style={{
                             backfaceVisibility: 'hidden',
                             transform: 'rotateY(180deg)',
                           }}
                         >
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Design Implication</p>
+                          <p className="eyebrow mb-2">Design Implication</p>
                           <p className="text-sm leading-relaxed">{need.design_implication}</p>
                           <p className="text-xs text-muted-foreground mt-3 text-center">Click to flip back</p>
                         </div>
@@ -526,7 +527,7 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
             <BarChart3 className="w-5 h-5 text-primary" />
             Visual Summary
           </h2>
-          <Card className="bg-muted/30 border-2 border-primary/10">
+          <Card className="bg-muted/30 border border-border">
             <CardContent className="pt-6">
               <p className="text-muted-foreground leading-relaxed">
                 From <strong>{agents.length}</strong> user persona{agents.length !== 1 ? 's' : ''}, we conducted{' '}
@@ -549,10 +550,10 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
                   <ResponsiveContainer width="100%" height={280}>
                     <BarChart data={categoryChartData} margin={{ top: 8, right: 8, left: 8, bottom: 24 }}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={categoryChartData.length > 4 ? -25 : 0} textAnchor={categoryChartData.length > 4 ? 'end' : 'middle'} />
-                      <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                      <Tooltip contentStyle={{ borderRadius: 8 }} />
-                      <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Needs" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#94a3b8' }} angle={categoryChartData.length > 4 ? -25 : 0} textAnchor={categoryChartData.length > 4 ? 'end' : 'middle'} />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                      <Tooltip contentStyle={chartTooltipStyle} />
+                      <Bar dataKey="count" fill="#f59e0b" radius={[4, 4, 0, 0]} name="Needs" />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -584,7 +585,7 @@ export function ResultsView({ data, onStartNew, onViewPastRuns }: ResultsViewPro
                           <Cell key={entry.name} fill={PRIORITY_COLORS[entry.name as keyof typeof PRIORITY_COLORS] ?? '#6b7280'} />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ borderRadius: 8 }} formatter={(value: number) => [value, 'Needs']} />
+                      <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [value, 'Needs']} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>

@@ -48,7 +48,7 @@ export function StageTracker({ currentStage, stages }: StageTrackerProps) {
                 {/* Stage Label */}
                 <div className="mt-3 text-center px-2">
                   <p
-                    className={`text-sm transition-colors duration-300 ${
+                    className={`font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors duration-300 ${
                       isActive ? 'text-foreground' : 'text-muted-foreground'
                     }`}
                   >

@@ -332,7 +332,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ analytics, agents 
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{agentName}</span>
-                    {isFastest && <span className="text-green-600">⭐ FASTEST</span>}
+                    {isFastest && <span className="text-green-400">⭐ FASTEST</span>}
                   </div>
                   <span className="text-muted-foreground">
                     {formatDuration(agent.total_duration)} ({formatCost(agent.total_cost)})
@@ -340,7 +340,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ analytics, agents 
                 </div>
                 <Progress 
                   value={percentage} 
-                  className={`h-3 ${isFastest ? 'bg-green-100' : ''}`}
+                  className={`h-3 ${isFastest ? 'bg-green-100 dark:bg-green-900/30' : ''}`}
                 />
                 <div className="text-xs text-muted-foreground">
                   Gen: {formatDuration(agent.stages.agent_generation?.duration || 0)} | 
