@@ -16,7 +16,7 @@ import {
   InterviewCardSkeleton,
   NeedCardSkeleton,
 } from './skeletons/CardSkeletons';
-import { estimatePipelineSeconds, formatDuration } from '../lib/timeEstimate';
+import { estimatePipelineSeconds, estimateRemainingSeconds, formatDuration } from '../lib/timeEstimate';
 
 interface ProgressDashboardProps {
   jobId: string;
@@ -112,8 +112,11 @@ export function ProgressDashboard({ jobId, onComplete }: ProgressDashboardProps)
     (progress.stage_number === 4 && progress.completed ? 25 : 0);
 
   const expectedAgents = progressData.run_input?.n_agents ?? intermediate_results.agents.length ?? 0;
-  const estTotalSec = estimatePipelineSeconds(expectedAgents || 4);
-  const remainingSec = Math.max(estTotalSec - elapsedSec, 0);
+  const nForEstimate = expectedAgents || 4;
+  const estTotalSec = estimatePipelineSeconds(nForEstimate);
+  // Stage-aware remaining: if Stage 4 (need extraction) is in progress we know
+  // most of the work is still ahead, even if the total elapsed is high.
+  const remainingSec = estimateRemainingSeconds(nForEstimate, progress.stage_number, elapsedSec);
 
   const stageNum = progress.stage_number;
   const stageDone = (n: number) => stageNum > n || (stageNum === n && progress.completed);
@@ -170,7 +173,7 @@ export function ProgressDashboard({ jobId, onComplete }: ProgressDashboardProps)
                   <>
                     ~{formatDuration(remainingSec)} remaining
                     <span className="mx-1 opacity-50">·</span>
-                    {formatDuration(elapsedSec)} elapsed
+                    {formatDuration(elapsedSec)} / ~{formatDuration(estTotalSec)}
                   </>
                 ) : (
                   <>Wrapping up · {formatDuration(elapsedSec)} elapsed</>
